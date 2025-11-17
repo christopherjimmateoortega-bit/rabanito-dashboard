@@ -2,297 +2,236 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<title>RABANITO – Dashboard</title>
 
-<title>🌱 RABANITO – Dashboard Moderno</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+<!-- Tema oscuro por defecto -->
 <style>
-body {
-  font-family: 'Poppins', sans-serif;
-  margin: 0; padding: 0;
-  background: #d7ffe0;
-  overflow-x: hidden;
-}
+  :root {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --text: #f8fafc;
+    --accent: #4ade80;
+    --danger: #f87171;
+    --warning: #facc15;
+  }
 
-/* Fondo suave animado */
-#fondo {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: radial-gradient(circle, rgba(255,255,255,0.6), rgba(180,255,200,0.3));
-  animation: brillo 6s infinite alternate;
-  z-index: -1;
-}
-@keyframes brillo {
-  from { filter: brightness(1); }
-  to   { filter: brightness(1.12); }
-}
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
 
-/* Menú lateral */
-#menu {
-  position: fixed; top: 0; left: 0;
-  width: 260px; height: 100%;
-  background: rgba(255,255,255,0.97);
-  transform: translateX(-260px);
-  transition: 0.3s;
-  box-shadow: 4px 0px 20px rgba(0,0,0,0.1);
-  backdrop-filter: blur(8px);
-  z-index: 20;
-}
-#menu.open { transform: translateX(0); }
+  h1 {
+    text-align: center;
+    padding: 20px;
+    font-size: 28px;
+    background: #14532d;
+    margin: 0;
+    color: white;
+  }
 
-#menu h2 {
-  font-size: 24px;
-  padding: 20px;
-  text-align: center;
-  color: #27ae60;
-}
+  .container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+  }
 
-.menuBtn {
-  padding: 15px 20px;
-  font-size: 17px;
-  border-bottom: 1px solid #ececec;
-  cursor: pointer;
-  transition: 0.2s;
-}
-.menuBtn:hover {
-  background: #e7ffe9;
-}
+  .card {
+    background: var(--card);
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px #0005;
+  }
 
-/* Botón menú */
-#toggleMenu {
-  position: fixed;
-  top: 15px; left: 15px;
-  background: #27ae60;
-  color: white;
-  font-size: 24px;
-  padding: 12px 15px;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-  z-index: 21;
-}
+  .label {
+    font-size: 18px;
+    font-weight: bold;
+  }
 
-/* Título */
-header {
-  text-align: center;
-  padding: 30px;
-  font-size: 32px;
-  font-weight: 700;
-  color: white;
-  background: linear-gradient(90deg, #2ecc71, #27ae60);
-  margin-bottom: 15px;
-  animation: fadeDown 1s;
-}
-@keyframes fadeDown{
-  from { opacity:0; transform:translateY(-20px);}
-  to   { opacity:1; transform:translateY(0);}
-}
+  .value {
+    font-size: 24px;
+    color: var(--accent);
+    margin-top: 5px;
+  }
 
-/* Contenedor */
-#contenedor {
-  width: 90%;
-  margin: auto;
-}
+  canvas {
+    width: 100% !important;
+    height: 250px !important;
+  }
 
-/* Tarjetas */
-.card {
-  background: white;
-  padding: 22px;
-  border-radius: 18px;
-  margin-bottom: 20px;
-  font-size: 22px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-  transition: 0.25s;
-}
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-}
-
-.valor {
-  font-weight: 700;
-  color: #27ae60;
-  font-size: 26px;
-}
-
-/* Estado */
-#estadoPlanta {
-  background: #e3faff;
-  padding: 20px;
-  border-radius: 20px;
-  text-align:center;
-  font-size: 26px;
-  font-weight: 700;
-  margin-top: 25px;
-}
-
-/* Gráfica */
-.graficaBox {
-  background: white;
-  padding: 20px;
-  border-radius: 20px;
-  margin-top: 30px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-}
+  #estado {
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    padding: 15px;
+    background: #1e3a8a;
+    border-radius: 10px;
+  }
 </style>
+
+<!-- Chart.js (CDN confiable) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
 
-<div id="fondo"></div>
+<h1>🌱 RABANITO – Dashboard en Tiempo Real</h1>
 
-<div id="toggleMenu">☰</div>
+<div class="container">
 
-<div id="menu">
-  <h2>🌿 Menú</h2>
-
-  <div class="menuBtn" onclick="modoClaro()">🌞 Tema Claro</div>
-  <div class="menuBtn" onclick="modoOscuro()">🌙 Tema Oscuro</div>
-
-  <div class="menuBtn" onclick="simular('seca')">💧 Simular: Falta agua</div>
-  <div class="menuBtn" onclick="simular('inundada')">⚠️ Simular: Demasiada agua</div>
-  <div class="menuBtn" onclick="simular('luz')">☀️ Simular: Mucha luz</div>
-  <div class="menuBtn" onclick="simular('poca_luz')">🌑 Simular: Poca luz</div>
-  <div class="menuBtn" onclick="simular('normal')">🌱 Simular: Normal</div>
-</div>
-
-<header>🌱 RABANITO – Dashboard Moderno</header>
-
-<div id="contenedor">
-
-  <div class="card">🌡 Temperatura: <span class="valor" id="temp">--</span> °C</div>
-  <div class="card">💧 Humedad Ambiental: <span class="valor" id="hum">--</span> %</div>
-  <div class="card">🌱 Humedad del Suelo: <span class="valor" id="suelo">--</span> %</div>
-  <div class="card">🔆 Luz: <span class="valor" id="luz">--</span></div>
-
-  <div id="estadoPlanta">Estado: ---</div>
-
-  <div class="graficaBox">
-    <h2 style="text-align:center;">📈 Historial</h2>
-    <canvas id="graficoPlanta" height="100"></canvas>
+  <!-- Datos actuales -->
+  <div class="card">
+    <div class="label">🌡 Temperatura:</div>
+    <div class="value" id="temp">-- °C</div>
   </div>
+
+  <div class="card">
+    <div class="label">💧 Humedad Ambiental:</div>
+    <div class="value" id="hum">-- %</div>
+  </div>
+
+  <div class="card">
+    <div class="label">🪴 Humedad del Suelo:</div>
+    <div class="value" id="suelo">-- %</div>
+  </div>
+
+  <div class="card">
+    <div class="label">🔆 Luz:</div>
+    <div class="value" id="luz">--</div>
+  </div>
+
+  <div id="estado" class="card">Estado: ---</div>
+
+  <!-- Gráficas -->
+  <div class="card"><canvas id="chartTemp"></canvas></div>
+  <div class="card"><canvas id="chartHum"></canvas></div>
+  <div class="card"><canvas id="chartSuelo"></canvas></div>
+  <div class="card"><canvas id="chartLuz"></canvas></div>
 
 </div>
 
 <script>
-/* ===================================================
-   CONFIGURACIÓN – IP REAL DEL ESP32
-   =================================================== */
-const ESP32_URL = "http://192.168.100.50/datos";
+// ==========================
+// CONFIGURACIÓN FIREBASE
+// ==========================
+const FIREBASE_URL = "https://rabanitomonitoreo-default-rtdb.firebaseio.com/ultimoRegistro.json";
 
-/* ===================================================
-   GRÁFICO
-   =================================================== */
-const ctx = document.getElementById("graficoPlanta").getContext("2d");
-
-let chart = new Chart(ctx, {
-  type: "line",
-  data: {
-    labels: [],
-    datasets: [
-      { label:"Temperatura", borderColor:"#e74c3c", backgroundColor:"rgba(231,76,60,0.2)", data:[] },
-      { label:"Humedad", borderColor:"#3498db", backgroundColor:"rgba(52,152,219,0.2)", data:[] },
-      { label:"Suelo", borderColor:"#27ae60", backgroundColor:"rgba(46,204,113,0.2)", data:[] },
-      { label:"Luz", borderColor:"#f1c40f", backgroundColor:"rgba(241,196,15,0.2)", data:[] }
-    ]
-  },
-  options: { scales: { y: { beginAtZero: true } } }
-});
-
-function actualizarGrafico(data) {
-  let h = new Date().toLocaleTimeString();
-  chart.data.labels.push(h);
-
-  chart.data.datasets[0].data.push(data.temperatura);
-  chart.data.datasets[1].data.push(data.humedad);
-  chart.data.datasets[2].data.push(data.humedad_suelo);
-  chart.data.datasets[3].data.push(data.luz);
-
-  if(chart.data.labels.length > 20){
-    chart.data.labels.shift();
-    chart.data.datasets.forEach(d => d.data.shift());
-  }
-
-  chart.update();
-}
-
-/* ===================================================
-   ESTADO AUTOMÁTICO
-   =================================================== */
-function evaluarEstado(d){
-  let estado = "";
-
-  if (d.humedad_suelo < 30) estado = "💧 Falta agua";
-  else if (d.humedad_suelo > 90) estado = "⚠️ Demasiada agua";
-  else if (d.luz < 20) estado = "🌑 Muy poca luz";
-  else if (d.luz > 900) estado = "☀️ Mucha luz";
-  else estado = "🌱 Saludable";
-
-  document.getElementById("estadoPlanta").innerText = "Estado: " + estado;
-}
-
-/* ===================================================
-   LECTURA DEL ESP32
-   =================================================== */
-async function actualizarDatos(){
-  try{
-    const res = await fetch(ESP32_URL);
-    const data = await res.json();
-
-    document.getElementById("temp").innerText  = data.temperatura;
-    document.getElementById("hum").innerText   = data.humedad;
-    document.getElementById("suelo").innerText = data.humedad_suelo;
-    document.getElementById("luz").innerText   = data.luz;
-
-    evaluarEstado(data);
-    actualizarGrafico(data);
-
-  } catch(e){ console.log(e); }
-}
-
-/* ===================================================
-   SIMULADOR
-   =================================================== */
-function simular(tipo){
-  let texto="";
-
-  if(tipo==="seca") texto="💧 Falta agua";
-  if(tipo==="inundada") texto="⚠️ Demasiada agua";
-  if(tipo==="luz") texto="☀️ Mucha luz";
-  if(tipo==="poca_luz") texto="🌑 Muy poca luz";
-  if(tipo==="normal") texto="🌱 Saludable";
-
-  document.getElementById("estadoPlanta").innerText = "Estado: "+texto;
-}
-
-/* ===================================================
-   TEMAS
-   =================================================== */
-function modoOscuro(){
-  document.body.style.background="#0e1f16";
-  document.querySelector("header").style.background="linear-gradient(90deg,#1b4332,#081c15)";
-}
-function modoClaro(){
-  document.body.style.background="#d7ffe0";
-  document.querySelector("header").style.background="linear-gradient(90deg,#2ecc71,#27ae60)";
-}
-
-/* ===================================================
-   MENÚ
-   =================================================== */
-document.getElementById("toggleMenu").onclick = () => {
-  document.getElementById("menu").classList.toggle("open");
+// ==========================
+// HISTÓRICO LOCAL (20 máx)
+// ==========================
+let historial = {
+  tiempo: [],
+  temp: [],
+  hum: [],
+  suelo: [],
+  luz: []
 };
 
-/* ===================================================
-   LOOP AUTOMÁTICO
-   =================================================== */
-setInterval(actualizarDatos, 3000);
-actualizarDatos();
+// ==========================
+// CREAR GRÁFICAS
+// ==========================
+function crearGrafica(ctx, label, color) {
+  return new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: [],
+      datasets: [{
+        label: label,
+        data: [],
+        borderColor: color,
+        borderWidth: 2,
+        fill: false,
+        tension: 0.2
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: { y: { beginAtZero: false } }
+    }
+  });
+}
 
+const chartTemp = crearGrafica(document.getElementById("chartTemp"), "Temperatura (°C)", "#f87171");
+const chartHum  = crearGrafica(document.getElementById("chartHum"),  "Humedad (%)", "#38bdf8");
+const chartSuelo= crearGrafica(document.getElementById("chartSuelo"),"Humedad Suelo (%)", "#4ade80");
+const chartLuz  = crearGrafica(document.getElementById("chartLuz"),  "Luz", "#facc15");
+
+// ==========================
+// ACTUALIZAR ESTADO
+// ==========================
+function evaluarEstado(data) {
+  let estado = "Normal";
+
+  if (data.humedadSuelo_PCT > 90) estado = "⚠ Demasiada agua";
+  if (data.humedadSuelo_PCT < 30) estado = "💧 Falta de agua";
+  if (data.luz_PCT < 20) estado = "🌑 Poca luz";
+  if (data.luz_PCT > 90) estado = "🔆 Mucha luz";
+
+  document.getElementById("estado").innerText = "Estado: " + estado;
+}
+
+// ==========================
+// ACTUALIZAR DASHBOARD
+// ==========================
+async function actualizarDatos() {
+  try {
+    const res = await fetch(FIREBASE_URL);
+    const data = await res.json();
+
+    if (!data) return;
+
+    // Actualiza valores visibles
+    document.getElementById("temp").innerText = data.temperatura_C + " °C";
+    document.getElementById("hum").innerText  = data.humedad_PCT + " %";
+    document.getElementById("suelo").innerText= data.humedadSuelo_PCT + " %";
+    document.getElementById("luz").innerText  = data.luz_PCT;
+
+    evaluarEstado(data);
+
+    // Actualizar histórico local
+    historial.tiempo.push(data.fechaHora);
+    historial.temp.push(data.temperatura_C);
+    historial.hum.push(data.humedad_PCT);
+    historial.suelo.push(data.humedadSuelo_PCT);
+    historial.luz.push(data.luz_PCT);
+
+    if (historial.tiempo.length > 20) {
+      historial.tiempo.shift();
+      historial.temp.shift();
+      historial.hum.shift();
+      historial.suelo.shift();
+      historial.luz.shift();
+    }
+
+    // Actualizar gráficas
+    chartTemp.data.labels = historial.tiempo;
+    chartTemp.data.datasets[0].data = historial.temp;
+    chartTemp.update();
+
+    chartHum.data.labels = historial.tiempo;
+    chartHum.data.datasets[0].data = historial.hum;
+    chartHum.update();
+
+    chartSuelo.data.labels = historial.tiempo;
+    chartSuelo.data.datasets[0].data = historial.suelo;
+    chartSuelo.update();
+
+    chartLuz.data.labels = historial.tiempo;
+    chartLuz.data.datasets[0].data = historial.luz;
+    chartLuz.update();
+
+  } catch (e) {
+    console.log("Error obteniendo datos:", e);
+  }
+}
+
+// Ejecutar cada 10 segundos
+actualizarDatos();
+setInterval(actualizarDatos, 10000);
 </script>
+
 </body>
 </html>
